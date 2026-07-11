@@ -1,69 +1,24 @@
-Name:		texlive-hyphen-occitan
-Version:	58652
-Release:	2
-Summary:	Occitan hyphenation patterns
+%global tl_name hyphen-occitan
+%global tl_revision 78069
+
+Name:		texlive-%{tl_name}
+Version:	%{tl_revision}
+Release:	1
+Summary:	Occitan hyphenation patterns.
 Group:		Publishing
-URL:		https://tug.org/texlive
-License:	http://www.tug.org/texlive/LICENSE.TL
-Source0:	http://mirrors.ctan.org/systems/texlive/tlnet/archive/hyphen-occitan.r%{version}.tar.xz
+URL:		https://www.ctan.org/pkg/hyphen-occitan
+License:	LPPL
+Source0:	https://mirrors.ctan.org/systems/texlive/tlnet/archive/hyphen-occitan.r%{tl_revision}.tar.xz
 BuildArch:	noarch
-BuildRequires:	texlive-tlpkg
-Requires(pre):	texlive-tlpkg
-Requires(post):	texlive-hyphen-base
-Requires:	texlive-hyph-utf8
+BuildSystem:	texlive
+Requires:	texlive(hyph-utf8)
+Requires:	texlive(hyphen-base)
+Provides:	texlive(%{tl_name}) = %{tl_revision}
 
 %description
-Hyphenation patterns for Occitan in ASCII encoding.
-Compliant with 'Gramatica dla lengua piemonteisa' by Camillo
-Brero.
+Hyphenation patterns for Occitan in T1/EC and UTF-8 encodings. They are
+supposed to be valid for all the Occitan variants spoken and written in
+the wide area called 'Occitanie' by the French. It ranges from the Val
+d'Aran within Catalunya, to the South Western Italian Alps encompassing
+the southern half of the French pentagon.
 
-%post
-%{_sbindir}/texlive.post
-
-%postun
-if [ $1 -eq 0 ]; then
-	%{_sbindir}/texlive.post
-fi
-
-#-----------------------------------------------------------------------
-%files
-%{_texmfdistdir}/tex/generic/hyph-utf8/loadhyph/*
-%{_texmfdistdir}/tex/generic/hyph-utf8/patterns/*/*
-%_texmf_language_dat_d/hyphen-occitan
-%_texmf_language_def_d/hyphen-occitan
-%_texmf_language_lua_d/hyphen-occitan
-
-#-----------------------------------------------------------------------
-%prep
-%autosetup -p1 -c
-
-%build
-
-%install
-mkdir -p %{buildroot}%{_texmfdistdir}
-cp -fpar tex %{buildroot}%{_texmfdistdir}
-
-mkdir -p %{buildroot}%{_texmf_language_dat_d}
-cat > %{buildroot}%{_texmf_language_dat_d}/hyphen-occitan <<EOF
-\%% from hyphen-occitan:
-occitan loadhyph-oc.tex
-EOF
-perl -pi -e 's|\\%%|%%|;' %{buildroot}%{_texmf_language_dat_d}/hyphen-occitan
-mkdir -p %{buildroot}%{_texmf_language_def_d}
-cat > %{buildroot}%{_texmf_language_def_d}/hyphen-occitan <<EOF
-\%% from hyphen-occitan:
-\addlanguage{occitan}{loadhyph-oc.tex}{}{2}{2}
-EOF
-perl -pi -e 's|\\%%|%%|;' %{buildroot}%{_texmf_language_def_d}/hyphen-occitan
-mkdir -p %{buildroot}%{_texmf_language_lua_d}
-cat > %{buildroot}%{_texmf_language_lua_d}/hyphen-occitan <<EOF
--- from hyphen-occitan:
-	['occitan'] = {
-		loader = 'loadhyph-oc.tex',
-		lefthyphenmin = 2,
-		righthyphenmin = 2,
-		synonyms = {  },
-		patterns = 'hyph-oc.pat.txt',
-		hyphenation = '',
-	},
-EOF
