@@ -13,7 +13,8 @@ BuildArch:	noarch
 BuildSystem:	texlive
 Requires:	texlive(hyph-utf8)
 Requires:	texlive(hyphen-base)
-Provides:	texlive(%{tl_name}) = %{tl_revision}
+Requires:	texlive-tlpkg
+Provides:	texlive(%{tl_name}) = %{version}
 
 %description
 Hyphenation patterns for Occitan in T1/EC and UTF-8 encodings. They are
@@ -22,3 +23,26 @@ the wide area called 'Occitanie' by the French. It ranges from the Val
 d'Aran within Catalunya, to the South Western Italian Alps encompassing
 the southern half of the French pentagon.
 
+
+%install -a
+mkdir -p %{buildroot}%{_texmf_language_dat_d}
+cat > %{buildroot}%{_texmf_language_dat_d}/%{tl_name} <<'TL_HYPHEN_EOF'
+% from hyphen-occitan:
+occitan loadhyph-oc.tex
+TL_HYPHEN_EOF
+mkdir -p %{buildroot}%{_texmf_language_def_d}
+cat > %{buildroot}%{_texmf_language_def_d}/%{tl_name} <<'TL_HYPHEN_EOF'
+% from hyphen-occitan:
+\addlanguage{occitan}{loadhyph-oc.tex}{}{2}{2}
+TL_HYPHEN_EOF
+mkdir -p %{buildroot}%{_texmf_language_lua_d}
+cat > %{buildroot}%{_texmf_language_lua_d}/%{tl_name} <<'TL_HYPHEN_EOF'
+-- from hyphen-occitan:
+['occitan'] = {
+	loader = 'loadhyph-oc.tex',
+	lefthyphenmin = 2,
+	righthyphenmin = 2,
+	synonyms = {  },
+	patterns = 'hyph-oc.pat.txt',
+},
+TL_HYPHEN_EOF
